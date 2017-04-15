@@ -24,8 +24,19 @@ MongoClient.connect(testDb, function(err, db) {
       obj.original_url += doc.original_url;
       res.send(obj);
      } else {
-      console.log(doc);
-      res.send(doc); 
+      db.collection('urls').find().toArray(function(err, items) {
+       if (err) {
+        throw err;
+       } else { 
+        db.collection('urls').insertOne({"original_url": req.params.url, "short_url": String(items.length - 1)}, function(err, result) {
+         if (err) {
+          throw err;
+         } else {
+         console.log('Inserted document.');
+         }
+        }); 
+       }
+      }); 
      }
     }
    }); 
